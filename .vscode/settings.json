@@ -7,7 +7,8 @@
     "json",
     "PathDot",
     "Path",
-    "Player"
+    "Player",
+    "Maze"
   ],
   "Lua.runtime.nonstandardSymbol": ["+=", "-=", "*=", "/=", "//=", "%=", "<<=", ">>=", "&=", "|=", "^="],
   "Lua.workspace.library": ["$PLAYDATE_SDK_PATH/CoreLibs"],

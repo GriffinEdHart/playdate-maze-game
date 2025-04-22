@@ -8,6 +8,7 @@ import "CoreLibs/crank"
 
 import "path"
 import "player"
+import "maze"
 
 local gfx <const> = playdate.graphics
 local font = gfx.font.new('font/Mini Sans 2X') -- DEMO
@@ -23,6 +24,8 @@ local locBufY = 0
 
 local playerStartX = 200
 local playerStartY = 120
+
+local maze = Maze("000000000000000004000000000000003AC40000000002AAAFD00000000000001500002EC000000050000053A8000003AAAAA9000000000000000000000000000000000")
 
 function gameSetUp()
 
