@@ -38,3 +38,7 @@ function Maze:init( seed )
     map:draw( 6, 4 )
 
 end
+
+function Maze:updateMaze()
+    map:draw(6, 4)
+end

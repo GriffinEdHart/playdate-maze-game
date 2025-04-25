@@ -8,7 +8,10 @@
     "PathDot",
     "Path",
     "Player",
-    "Maze"
+    "Maze",
+    "Game",
+    "StateMachine",
+    "ticksPerRevolution"
   ],
   "Lua.runtime.nonstandardSymbol": ["+=", "-=", "*=", "/=", "//=", "%=", "<<=", ">>=", "&=", "|=", "^="],
   "Lua.workspace.library": ["$PLAYDATE_SDK_PATH/CoreLibs"],
