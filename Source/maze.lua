@@ -13,26 +13,29 @@ map:setSize( 15, 9 )
 
 class('Maze').extends()
 
-function Maze:init( seed )
+function Maze:init( seed, startX, startY )
     self.seed = seed
     print("Seed entered: ", self.seed)
     self.squares = {}
 
+    self.startX = startX
+    self.startY = startY
+
     mazeIndex = 1
 
-    xCoord = 6 -- Top left corner of screen (accounting for border)
-    yCoord = 4
+    -- xCoord = 6 -- Top left corner of screen (accounting for border)
+    -- yCoord = 4 -- Not needed anymore
 
     for i = 1, 9 do -- 9 rows
+        self.squares[i] = {} -- Create 2D Array (table) - easier to manage player position
+    
         for j = 1, 15 do -- 15 columns
-            print("Creating maze square at: ", j, ", ", i, " with render value of ", self.seed:sub(mazeIndex,mazeIndex))
-            self.squares[mazeIndex] = { tile =  MazeSquare( xCoord, yCoord, self.seed:sub(mazeIndex,mazeIndex) ) }
-            print("Maze square created at: ", self.squares[mazeIndex].tile.xCoord, ",", self.squares[mazeIndex].tile.yCoord, "with render value of", self.squares[mazeIndex].tile.renderValue)
-            map:setTileAtPosition( j, i, self.squares[mazeIndex].tile.renderValue )
+            self.squares[i][j] = 
+                { tile = MazeSquare( j, i, self.seed:sub( mazeIndex, mazeIndex ) ) }
+            map:setTileAtPosition( j, i, self.squares[i][j].tile.renderValue)
             mazeIndex = mazeIndex + 1
-            xCoord = xCoord + 26
         end
-        yCoord = yCoord + 26
+        
     end
     
     map:draw( 6, 4 )

@@ -58,20 +58,22 @@ local gameStates = {
 			pd.display.setRefreshRate(30)
 			gfx.clear(gfx.kColorWhite)
 			game:setup()
+			game:draw()
 			print("Entered Level Mode")
 		end,
 		update = function()
-			
 			game:update(pd.getElapsedTime())
 			pd.resetElapsedTime()
+			-- game.maze:updateMaze()
 			game:draw()
+			
 			if game.gameWon then
 				game.score = game.score + 10
 				game:reset()
 				game:setup()
 				game.gameWon = false
 			end
-			gfx.drawText("Score: " .. game.score, 10, 20, kText)
+			-- gfx.drawText("Score: " .. game.score, 10, 20, kText)
 		end,
 		exit = function()
 			print("Exited Level Mode")
@@ -129,7 +131,6 @@ pd.crankDockedCallback = pd.crankDocked
 pd.crankUndockedCallback = pd.crankUndocked
 
 gameStateMachine:changeState("mainMenu")
-
 
 
 

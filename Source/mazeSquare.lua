@@ -65,10 +65,10 @@ function MazeSquare:init( x, y, renderValue )
 
     -- bits = toBits(self.renderValue - 1, 4) -- trash. doesn't work.
 
-    self.openLeft = bits:sub(1,1)
-    self.openDown = bits:sub(2,2)
-    self.openRight = bits:sub(3,3)
-    self.openUp = bits:sub(4,4)
+    self.openLeft = tonumber(bits:sub(1,1))
+    self.openDown = tonumber(bits:sub(2,2))
+    self.openRight = tonumber(bits:sub(3,3))
+    self.openUp = tonumber(bits:sub(4,4))
     
 end
 
