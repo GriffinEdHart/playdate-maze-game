@@ -1,0 +1,12 @@
+{
+    "seed": "6AA82AEAAAAC6AC56AAAC3AAA8552D552AA96AAAA93C5552AAAFAAAAAE9553AAA852AEA856D56AAAAFAAFAAD55556EA852AFA85157D556ABAABAA94513913AAAAAAA839",
+    "levelStart": {
+        "x": 3,
+        "y": 4
+    },
+    "levelEnd": {
+        "x": 13,
+        "y": 9
+    },
+    "fruits": {}
+}

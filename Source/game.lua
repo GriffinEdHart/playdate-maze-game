@@ -1,4 +1,11 @@
+local pd <const> = playdate
+local gfx <const> = pd.graphics
 
+local startImage = gfx.image.new("Images/startTile")
+local exitImage = gfx.image.new("Images/exitTile")
+
+startSprite = gfx.sprite.new( startImage )
+endSprite = gfx.sprite.new( exitImage )
 
 local ticksPerRevolution = 2
 
@@ -24,16 +31,26 @@ function Game:init()
     self.pathIndex = 1
 end
 
-function Game:setup()
+function Game:setup(levelData)
+    self.player = nil
     self.playerDirection = 2
-    self.maze = Maze("000000000000000004000000000000003AC40000000002AAAFD00000000000001500002EC000000050000053A8000003AAAAA9000000000000000000000000000000000", 1, 4) -- Hard-coded right now - Will figure out how to do multiple levels soon. -- 1, 4 correspond to the starting position of the player in the maze
+    self.maze = Maze(levelData)
     
-    self.playerStartX = self.playerStartX + (26 * self.maze.startX) -- original offset + (tile size * starting index)
-    self.playerStartY = self.playerStartY + (26 * self.maze.startY)
+    self.playerStartX = self.playerStartX + (26 * levelData.levelStart.x) -- original offset + (tile size * starting index)
+    self.playerStartY = self.playerStartY + (26 * levelData.levelStart.y)
+    self.mazePosX = levelData.levelStart.x -- Initialize tracker for player location within the maze
+    self.mazePosY = levelData.levelStart.y
     
-    self.mazePosX = self.maze.startX -- Initialize tracker for player location within the maze
-    self.mazePosY = self.maze.startY
-    self.player = Player(self.playerStartX, self.playerStartY)
+    
+
+    
+    startSprite:moveTo( -6 + (26 * levelData.levelStart.x), -8 + (26 * levelData.levelStart.y) )
+    endSprite:moveTo( -6 + (26 * levelData.levelEnd.x), -8 + (26 * levelData.levelEnd.y) )
+    startSprite:add()
+    endSprite:add()
+    
+
+    self.player = Player(self.playerStartX, self.playerStartY, levelData.levelStart.x, levelData.levelStart.y)
     self.locBufX = self.playerStartX
     self.locBufY = self.playerStartY
     self.path = Path(self.locBufX, self.locBufY)
@@ -46,8 +63,12 @@ function Game:update(dt)
 end
 
 function Game:draw()
+    -- startImage:draw(levelData.levelStart.x * 26 - 15, levelData.levelStart.y * 26 - 15)
+    -- exitImage:draw(levelData.levelEnd.x * 26 - 15, levelData.levelEnd.y * 26 - 15)
     self.player:update()
+    gfx.sprite.update()
     self.maze:updateMaze()
+    
     if self.isCrankDocked then
         playdate.ui.crankIndicator:draw()
     end
@@ -63,6 +84,20 @@ function Game:traversePath()
         self.maze.updateMaze()
         playdate.wait(100)
     end
+    self.player.curX = self.mazePosX
+    self.player.curY = self.mazePosY
+    print(self.player.curX)
+    print(self.player.curY)
+    if self.player.curX == levelData.levelEnd.x and self.player.curY == levelData.levelEnd.y then
+        print("Level Complete!!!")
+        self.gameWon = true
+        self.player:derender()
+        return
+    end
+    -- print(self.maze.squares[self.mazePosY][self.mazePosX].tile.openLeft)
+    -- print(self.maze.squares[self.mazePosY][self.mazePosX].tile.openDown)
+    -- print(self.maze.squares[self.mazePosY][self.mazePosX].tile.openRight)
+    -- print(self.maze.squares[self.mazePosY][self.mazePosX].tile.openUp)
 end
 
 
@@ -110,8 +145,8 @@ function Game:handleInput()
                 self.path:addPoint(self.locBufX, self.locBufY)
             end
         elseif self.playerDirection == 4 then
-            print(self.maze.squares[self.mazePosY][self.mazePosX].tile.openRight)
-            if self.maze.squares[self.mazePosY][self.mazePosX].tile.openRight == 1 then
+            print(self.maze.squares[self.mazePosY][self.mazePosX].tile.openLeft)
+            if self.maze.squares[self.mazePosY][self.mazePosX].tile.openLeft == 1 then
                 self.locBufX -= 26
                 self.mazePosX = self.mazePosX - 1
                 self.path:addPoint( self.locBufX, self.locBufY )

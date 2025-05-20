@@ -6,11 +6,13 @@ local image <const> = gfx.image.new("Images/playerImage")
 
 class('Player').extends(gfx.sprite)
 
-function Player:init( x, y )
+function Player:init( x, y, curX, curY )
     self:moveTo( x, y )
     self:setImage(image)
     self:add()
     self.pathIndex = 1
+    self.curX = curX
+    self.curY = curY
 end
 
 function Player:traverse( path )
@@ -23,4 +25,8 @@ function Player:traverse( path )
         pd.wait(100)
         self.pathIndex = self.pathIndex + 1
     end
+end
+
+function Player:derender()
+    self:remove()
 end

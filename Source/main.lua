@@ -15,6 +15,7 @@ import "game"
 
 local pd <const> = playdate
 local gfx <const> = pd.graphics
+local ds <const> = pd.datastore
 -- local Game = require("game")
 -- local StateMachine = require("stateMachine")
 
@@ -23,8 +24,11 @@ local gameStateMachine = StateMachine("mainMenu")
 
 local kText = { font = gfx.getSystemFont(), color = gfx.kColorWhite }
 
+-- local testFile = pd.datastore.read("data/test1")
+-- print(testFile.seed)
 
-
+local levelNum = 1
+local gameScore = 0
 
 local gameStates = {
 	mainMenu = {
@@ -55,9 +59,15 @@ local gameStates = {
 	},
 	levelMode = {
 		enter = function()
+			game = Game()
 			pd.display.setRefreshRate(30)
 			gfx.clear(gfx.kColorWhite)
-			game:setup()
+			levelData = ds.read(string.format("data/level%q", levelNum))
+			game:setup(levelData)
+			gfx.clear(gfx.kColorWhite)
+			gfx.drawText(string.format("Level %q", levelNum), 100, 50, kText)
+			gfx.drawText(string.format("Score: %q", gameScore), 80, 80, kText)
+			pd.wait(2000)
 			game:draw()
 			print("Entered Level Mode")
 		end,
@@ -68,10 +78,9 @@ local gameStates = {
 			game:draw()
 			
 			if game.gameWon then
-				game.score = game.score + 10
-				game:reset()
-				game:setup()
-				game.gameWon = false
+				gameScore = gameScore + 10
+				levelNum = levelNum + 1
+				gameStateMachine:changeState("levelMode")
 			end
 			-- gfx.drawText("Score: " .. game.score, 10, 20, kText)
 		end,

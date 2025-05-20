@@ -13,62 +13,65 @@ function MazeSquare:init( x, y )
    self.renderValue = 0 -- 0 by default, means no open sides.
 end
 
-function MazeSquare:init( x, y, renderValue )
+function MazeSquare:init( x, y, renderValue, isStart, isEnd, isFruit )
     
+    self.isStart = isStart
+    self.isEnd = isEnd
+    self.isFruit = isFruit
     
     self.xCoord = x
     self.yCoord = y
     
     self.renderValue = tonumber( renderValue, 16 ) + 1
     print(self.renderValue)
-    bits = "0000"
+    self.bits = "0000"
 
     if self.renderValue - 1 == 0 then
-        bits = "0000"
+        self.bits = "0000"
     elseif self.renderValue - 1 == 1 then
-        bits = "0001"
+        self.bits = "0001"
     elseif self.renderValue - 1 == 2 then
-        bits = "0010"
+        self.bits = "0010"
     elseif self.renderValue - 1 == 3 then
-        bits = "0011"
+        self.bits = "0011"
     elseif self.renderValue - 1 == 4 then
-        bits = "0100"
+        self.bits = "0100"
     elseif self.renderValue - 1 == 5 then
-        bits = "0101"
+        self.bits = "0101"
     elseif self.renderValue - 1 == 6 then
-        bits = "0110"
+        self.bits = "0110"
     elseif self.renderValue - 1 == 7 then
-        bits = "0111"
+        self.bits = "0111"
     elseif self.renderValue - 1 == 8 then
-        bits = "1000"
+        self.bits = "1000"
     elseif self.renderValue - 1 == 9 then
-        bits = "1001"
+        self.bits = "1001"
     elseif self.renderValue - 1 == 10 then
-        bits = "1010"
+        self.bits = "1010"
     elseif self.renderValue - 1 == 11 then
-        bits = "1011"
+        self.bits = "1011"
     elseif self.renderValue - 1 == 12 then
-        bits = "1100"
+        self.bits = "1100"
     elseif self.renderValue - 1 == 13 then
-        bits = "1101"
+        self.bits = "1101"
     elseif self.renderValue - 1 == 14 then
-        bits = "1110"
+        self.bits = "1110"
     elseif self.renderValue - 1 == 15 then
-        bits = "1111"
+        self.bits = "1111"
     else
-        bits = "0000"
+        self.bits = "0000"
     end
 
 
-    print(bits)
+    print(self.bits)
 
 
     -- bits = toBits(self.renderValue - 1, 4) -- trash. doesn't work.
 
-    self.openLeft = tonumber(bits:sub(1,1))
-    self.openDown = tonumber(bits:sub(2,2))
-    self.openRight = tonumber(bits:sub(3,3))
-    self.openUp = tonumber(bits:sub(4,4))
+    self.openLeft = tonumber(self.bits:sub(1,1))
+    self.openDown = tonumber(self.bits:sub(2,2))
+    self.openRight = tonumber(self.bits:sub(3,3))
+    self.openUp = tonumber(self.bits:sub(4,4))
     
 end
 
