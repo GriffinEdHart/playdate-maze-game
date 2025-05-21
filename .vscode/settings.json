@@ -11,7 +11,8 @@
     "Maze",
     "Game",
     "StateMachine",
-    "ticksPerRevolution"
+    "ticksPerRevolution",
+    "Fruit"
   ],
   "Lua.runtime.nonstandardSymbol": ["+=", "-=", "*=", "/=", "//=", "%=", "<<=", ">>=", "&=", "|=", "^="],
   "Lua.workspace.library": ["$PLAYDATE_SDK_PATH/CoreLibs"],

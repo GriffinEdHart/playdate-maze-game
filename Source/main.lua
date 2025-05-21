@@ -12,6 +12,7 @@ import "player"
 import "maze"
 import "stateMachine"
 import "game"
+import "fruit"
 
 local pd <const> = playdate
 local gfx <const> = pd.graphics
@@ -78,7 +79,7 @@ local gameStates = {
 			game:draw()
 			
 			if game.gameWon then
-				gameScore = gameScore + 10
+				gameScore = gameScore + 10 + game.score
 				levelNum = levelNum + 1
 				gameStateMachine:changeState("levelMode")
 			end

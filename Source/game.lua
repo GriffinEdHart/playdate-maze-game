@@ -9,6 +9,10 @@ endSprite = gfx.sprite.new( exitImage )
 
 local ticksPerRevolution = 2
 
+local parScore = 1000
+
+local penaltyScale = 50
+
 class('Game').extends()
 
 function Game:init()
@@ -29,6 +33,7 @@ function Game:init()
     self.moveSensitivity = 5
     self.score = 0
     self.pathIndex = 1
+    self.fruits = {}
 end
 
 function Game:setup(levelData)
@@ -48,6 +53,8 @@ function Game:setup(levelData)
     endSprite:moveTo( -6 + (26 * levelData.levelEnd.x), -8 + (26 * levelData.levelEnd.y) )
     startSprite:add()
     endSprite:add()
+
+    self:initFruits(levelData)
     
 
     self.player = Player(self.playerStartX, self.playerStartY, levelData.levelStart.x, levelData.levelStart.y)
@@ -63,10 +70,9 @@ function Game:update(dt)
 end
 
 function Game:draw()
-    -- startImage:draw(levelData.levelStart.x * 26 - 15, levelData.levelStart.y * 26 - 15)
-    -- exitImage:draw(levelData.levelEnd.x * 26 - 15, levelData.levelEnd.y * 26 - 15)
-    self.player:update()
-    gfx.sprite.update()
+        
+    gfx.sprite:update()
+    
     self.maze:updateMaze()
     
     if self.isCrankDocked then
@@ -78,26 +84,37 @@ function Game:traversePath()
     for i = self.pathIndex, #self.path.path do
         local point = self.path.path[i].pathDot
         self.player:moveTo( point.xCoord, point.yCoord )
+        self.player.curX = (point.xCoord + 6) // 26
+        self.player.curY = (point.yCoord + 8) // 26
+
+        for _, fruit in ipairs(self.fruits) do
+            if not fruit.pickedUp and self.player.curX == fruit.xCoord and self.player.curY == fruit.yCoord then
+                print("Picked up " .. fruit.name .. " at X: " .. fruit.x .. ", Y: " .. fruit.y)
+                fruit.pickedUp = true
+                fruit:derender()
+
+                self.score = self.score + 100
+                break
+            end
+        end
+
         point:remove()
         self.pathIndex = self.pathIndex + 1
         self.player:update()
         self.maze.updateMaze()
         playdate.wait(100)
     end
-    self.player.curX = self.mazePosX
-    self.player.curY = self.mazePosY
-    print(self.player.curX)
-    print(self.player.curY)
     if self.player.curX == levelData.levelEnd.x and self.player.curY == levelData.levelEnd.y then
         print("Level Complete!!!")
         self.gameWon = true
+        self.score = self.score + self:calculateScore(self.pathIndex)
         self.player:derender()
+        for _, fruit in ipairs(self.fruits) do
+            fruit:derender()
+        end
+    
         return
     end
-    -- print(self.maze.squares[self.mazePosY][self.mazePosX].tile.openLeft)
-    -- print(self.maze.squares[self.mazePosY][self.mazePosX].tile.openDown)
-    -- print(self.maze.squares[self.mazePosY][self.mazePosX].tile.openRight)
-    -- print(self.maze.squares[self.mazePosY][self.mazePosX].tile.openUp)
 end
 
 
@@ -179,4 +196,26 @@ function Game:updatePlayerPosition()
     -- Check for wall collisions here
 
 
+end
+
+function Game:initFruits(levelData)
+    for _, fruit in ipairs(self.fruits) do
+        if fruit then
+            fruit:derender()
+        end
+    end
+    self.fruits = {}
+
+    for fruitName, fruitData in pairs(levelData.fruits) do
+        local newFruit = Fruit(fruitData.x, fruitData.y, fruitName)
+        table.insert(self.fruits, newFruit)
+    end
+end
+
+function Game:calculateScore(crankCount)
+    if crankCount <= 0 then
+        return parScore
+    else
+        return parScore - math.floor(penaltyScale * math.log(crankCount + 1))
+    end
 end

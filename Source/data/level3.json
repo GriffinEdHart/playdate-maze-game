@@ -1,12 +1,29 @@
 {
-    "seed": "6EAAAC6EAAAAAC4552AA9116AC6C5517C6EAAAFC5555569553A86D555555787FEAED555555556D556955555555551513A9395555557AD2AAAAABD3BD3BABAAAAAAA92A9",
+    "seed": "000000000000000006AEAAAAAEAC000056BAAEA83C50000556E8382C5500005153AAA87D50000543E82AA955000053ABAE82A9500003AAAABAAAA900000000000000000",
     "levelStart": {
-        "x": 5,
-        "y": 8
+        "x": 3,
+        "y": 2
     },
     "levelEnd": {
-        "x": 7,
-        "y": 4
+        "x": 8,
+        "y": 5
     },
-    "fruits": {}
+    "fruits": {
+        "fr1": {
+            "x": 6,
+            "y": 3
+        },
+        "fr2": {
+            "x": 13,
+            "y": 4
+        },
+        "fr3": {
+            "x": 10,
+            "y": 5
+        },
+        "fr4": {
+            "x": 6,
+            "y": 7
+        }
+    }
 }
