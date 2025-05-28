@@ -30,18 +30,26 @@ local kText = { font = gfx.getSystemFont(), color = gfx.kColorWhite }
 
 local levelNum = 1
 local gameScore = 0
+local numCranks = 30
+
+local font = gfx.font.new("font/Mini Sans 2X")
 
 local gameStates = {
 	mainMenu = {
 		enter = function()
 			pd.display.setRefreshRate(30)
 			game.gameStarted = false
+			levelNum = 1 -- Reset values
+			gameScore = 0
+			numCranks = 30
 			print("Entered Main Menu")
 		end,
 		update = function()
 			gfx.clear(gfx.kColorWhite)
-			gfx.drawText("Crank Maze", 100, 50, kText)
-			gfx.drawText("Press A to start", 80, 80, kText)
+			gfx.setFont(font)
+			gfx.drawText("Crank Your Hog", 110, 30, kText)
+			gfx.drawText("Press A to start Level Mode", 10, 100, kText)
+			gfx.drawText("Press B to start Endless Mode", 10, 130, kText)
 			if pd.buttonIsPressed(pd.kButtonMenu) then
 				pd.reboot()
 			end
@@ -62,52 +70,98 @@ local gameStates = {
 		enter = function()
 			game = Game()
 			pd.display.setRefreshRate(30)
+			gfx.setFont(font)
 			gfx.clear(gfx.kColorWhite)
-			levelData = ds.read(string.format("data/level%q", levelNum))
-			game:setup(levelData)
-			gfx.clear(gfx.kColorWhite)
-			gfx.drawText(string.format("Level %q", levelNum), 100, 50, kText)
-			gfx.drawText(string.format("Score: %q", gameScore), 80, 80, kText)
-			pd.wait(2000)
-			game:draw()
-			print("Entered Level Mode")
+
+			local success, result = pcall(function()
+				local path = string.format("data/level%q", levelNum)
+				levelData = ds.read(path)
+				if not levelData then
+					error("No data found for level: " .. path)
+				end
+				game:setup(levelData)
+			end)
+
+			
+			if success then
+				gfx.clear(gfx.kColorWhite)
+				gfx.drawText(string.format("Level %q", levelNum), 10, 50, kText)
+				gfx.drawText(string.format("Score: %q", gameScore), 30, 80, kText)
+				pd.wait(2000)
+				game:draw()
+				print("Entered Level Mode")
+			else
+				local errorMessage = result
+				print("Error: " .. errorMessage)
+				
+				gfx.clear(gfx.kColorWhite)
+				gfx.drawText(string.format("Congratulations, you win!"), 50, 50, kText)
+				gfx.drawText(string.format("Your final score: %q", gameScore), 10, 80, kText)
+				pd.wait(2000)
+				gameStateMachine:changeState("mainMenu")
+			end
+			
 		end,
 		update = function()
 			game:update(pd.getElapsedTime())
 			pd.resetElapsedTime()
 			-- game.maze:updateMaze()
 			game:draw()
+			gfx.setFont(font)
 			
 			if game.gameWon then
-				gameScore = gameScore + 10 + game.score
+				gameScore = gameScore + game.score
+				print(string.format("Total Score: %q", gameScore))
 				levelNum = levelNum + 1
 				gameStateMachine:changeState("levelMode")
 			end
 			-- gfx.drawText("Score: " .. game.score, 10, 20, kText)
 		end,
 		exit = function()
-			print("Exited Level Mode")
+			print("Exited level mode.")
 		end
 	},
 	endlessMode = {
 		enter = function()
+			game = Game()
 			pd.display.setRefreshRate(30)
-			game:reset()
-			game:setup()
+			gfx.clear(gfx.kColorWhite)
+
+			game:setupEndless(numCranks)
+
+			gfx.clear(gfx.kColorWhite)
+			gfx.drawText(string.format("Level %q", levelNum), 10, 50, kText)
+			gfx.drawText(string.format("Score: %q", gameScore), 30, 80, kText)
+			gfx.drawText(string.format("Cranks Remaining: %q", numCranks), 30, 110, kText)
+			pd.wait(2000)
+			game:draw()
+
 			print("Entered Endless Mode")
 		end,
 		update = function()
-			gfx.clear(gfx.kColorWhite)
 			game:update(pd.getElapsedTime())
 			pd.resetElapsedTime()
+			-- game.maze:updateMaze()
 			game:draw()
+			gfx.setFont(font)
+			
 			if game.gameWon then
-				game.score = game.score + 10
-				game:reset()
-				game:setup()
-				game.gameWon = false
+				gameScore = gameScore + game.score
+				numCranks = game.cranksLeft
+				print(string.format("Total Score: %q", gameScore))
+				levelNum = levelNum + 1
+				gameStateMachine:changeState("endlessMode")
 			end
-			gfx.graphics.drawText("Score: " .. game.score, 10, 20, kText)
+			if game.gameLost then
+				gameScore = gameScore + game.score
+				numCranks = game.cranksLeft
+				gfx.clear(gfx.kColorWhite)
+				gfx.drawText(string.format("Game over!"), 100, 50, kText)
+				gfx.drawText(string.format("You completed %q levels.", levelNum), 10, 80, kText)
+				gfx.drawText(string.format("Your final score: %q", gameScore), 10, 110, kText)
+				pd.wait(2000)
+				gameStateMachine:changeState("mainMenu")
+			end
 		end,
 		exit = function()
 			print("Exited Endless Mode")
@@ -123,7 +177,6 @@ function pd.update()
 	local dt = pd.getElapsedTime()
 	pd.resetElapsedTime()
 	gameStateMachine:update(dt)
-	pd.drawFPS(0, 0)
 	playdate.timer.updateTimers()
 end
 

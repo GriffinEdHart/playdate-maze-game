@@ -10,13 +10,13 @@ function Fruit:init( x, y, fruitName )
     self.pickedUp = false
     self.name = fruitName
 
-    print(self.name .. " has been placed at " .. self.xCoord .. ", " .. self.yCoord)
+    -- print(self.name .. " has been placed at " .. self.xCoord .. ", " .. self.yCoord)
 
     if image then
         self:moveTo((self.xCoord * 26) - 6, (self.yCoord * 26) - 8)
         self:setImage(image)
         self:add()
-        print(self.name .. " has been placed at " .. self.x .. ", " .. self.y)
+        -- print(self.name .. " has been placed at " .. self.x .. ", " .. self.y)
     else
         print("ERROR: Could not load fruit image for " .. self.name)
     end

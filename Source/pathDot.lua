@@ -10,7 +10,7 @@ function PathDot:init( x, y )
     self:moveTo( x, y )
     self:setImage(image)
     self:add()
-    print("Placed Dot at (", self.xCoord, ", ", self.yCoord, ")")
+    -- print("Placed Dot at (", self.xCoord, ", ", self.yCoord, ")")
 end
 
 function PathDot:remove()
